@@ -7,8 +7,14 @@ import tabula
 from collections import Counter
 
 app = dash.Dash(__name__, suppress_callback_exceptions=True)
-
+app.title ="Examens en Guinée"
+colors = {
+    'background': '#202020',
+    'papercolor': '#202020',
+    'text': '#7FDBFF'
+}
 app.layout = html.Div([
+    html.H1("Républic de GUINEE", style={'textAlign': 'center', 'color': colors["text"]}, className="bg-primary text-white text-center p-3 h3 mb-2 "),
     dcc.Upload(
         id='upload-pdf',
         children=html.Div([
@@ -16,20 +22,26 @@ app.layout = html.Div([
             html.A('Select PDF File')
         ]),
         style={
-            'width': '50%',
-            'height': '60px',
-            'lineHeight': '60px',
-            'borderWidth': '1px',
-            'borderStyle': 'dashed',
-            'borderRadius': '5px',
-            'textAlign': 'center',
-            'margin': '10px'
+            "width": "50%",
+            "height": "60px",
+            "lineHeight": "60px",
+            "borderWidth": "1px",
+            "borderStyle": "dashed",
+            "borderRadius": "5px",
+            "textAlign": "center",
+            "margin": "10px auto",
         },
         multiple=False
     ),
     html.Div([
-        dcc.Dropdown(id='column-dropdown', placeholder="Select a column"),
-        dcc.Dropdown(id='word-dropdown', placeholder="Select a word")
+        dcc.Dropdown(id='column-dropdown', placeholder="Selectioner une colonne",   
+                     style={"width": "50%", "margin": "10px auto"," font-size": "16px"},   
+                     clearable=True,
+                     searchable=True),
+        dcc.Dropdown(id='word-dropdown', placeholder="Selectioner une colonne", 
+                     style={"width": "50%", "margin": "10px auto"," font-size": "16px"},
+                     clearable=True,
+                     searchable=True)
     ]),
     html.Div(id='word-count-output'),
     html.Div(id='output-data-table')
@@ -40,8 +52,9 @@ def parse_pdf(contents, filename):
     decoded = base64.b64decode(content_string)
     
     try:
-        df = tabula.read_pdf(io.BytesIO(decoded), lattice=True, pages="all")
+        df = tabula.read_pdf(io.BytesIO(decoded), lattice=True, pages="1")
         df = pd.concat(df, ignore_index=True, join="inner",  )
+        # for all pages pages="all"
         # Remove the first row
    
       #  df = df[0].drop(["Unnamed: 0"],axis=0)
